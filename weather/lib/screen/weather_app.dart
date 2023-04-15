@@ -8,8 +8,9 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  String location = 'Indore';
+  String _location = 'Indore';
   late Future<WeatherData> weatherData;
+  bool _visible = false;
 
   @override
   void initState() {
@@ -18,8 +19,13 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   void _fetchWeatherData() async {
-    print(location);
-    weatherData = fetchWeatherData(location);
+    print(_location);
+    weatherData = fetchWeatherData(_location);
+    weatherData.then((value) {
+      setState(() {
+        _visible = true;
+      });
+    });
   }
 
   @override
@@ -38,12 +44,13 @@ class _WeatherPageState extends State<WeatherPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
                   decoration: InputDecoration(
-                    labelText: 'Enter location',
+                    labelText: 'Enter your location',
                     border: OutlineInputBorder(),
                   ),
                   onSubmitted: (value) async {
                     setState(() {
-                      location = value;
+                      _location = value;
+                      _visible = false;
                     });
                     _fetchWeatherData();
                   },
@@ -91,43 +98,46 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   Widget _buildWeatherData(WeatherData weatherData) {
-    return Column(
-      children: [
-        Text(
-          '${weatherData.name}',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return AnimatedOpacity(
+        opacity: _visible ? 1.0 : 0.0,
+        duration: const Duration(seconds: 1),
+        child: Column(
           children: [
-            Image.network(
-              'https://openweathermap.org/img/w/${weatherData.weather![0].icon}.png',
-              width: 50,
-              height: 50,
-            ),
-            SizedBox(width: 16),
             Text(
-              '${weatherData.main?.temp?.round()}°C',
+              '${weatherData.name}',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
               ),
             ),
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.network(
+                  'https://openweathermap.org/img/w/${weatherData.weather![0].icon}.png',
+                  width: 50,
+                  height: 50,
+                ),
+                SizedBox(width: 16),
+                Text(
+                  '${weatherData.main?.temp?.round()}°C',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Text(
+              '${weatherData.weather![0].main}',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
-        ),
-        SizedBox(height: 16),
-        Text(
-          '${weatherData.weather![0].main}',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
+        ));
   }
 }
