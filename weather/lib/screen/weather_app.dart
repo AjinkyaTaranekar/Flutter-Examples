@@ -8,7 +8,7 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  String location = 'London';
+  String location = 'Indore';
   late Future<WeatherData> weatherData;
 
   @override
@@ -41,7 +41,7 @@ class _WeatherPageState extends State<WeatherPage> {
                     labelText: 'Enter location',
                     border: OutlineInputBorder(),
                   ),
-                  onSubmitted: (value) {
+                  onSubmitted: (value) async {
                     setState(() {
                       location = value;
                     });
@@ -54,12 +54,15 @@ class _WeatherPageState extends State<WeatherPage> {
                 child: FutureBuilder<WeatherData>(
                   future: weatherData,
                   builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return _loadingWidget();
+                    }
                     if (snapshot.hasData) {
                       return _buildWeatherData(snapshot.data!);
                     } else if (snapshot.hasError) {
                       return Text('${snapshot.error}');
                     }
-                    return const CircularProgressIndicator();
+                    return _loadingWidget();
                   },
                 ),
               )
@@ -67,6 +70,23 @@ class _WeatherPageState extends State<WeatherPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _loadingWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Loading',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(width: 16),
+        CircularProgressIndicator(),
+      ],
     );
   }
 
