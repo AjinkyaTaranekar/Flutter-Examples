@@ -74,7 +74,7 @@ class _WeatherPageState extends State<WeatherPage> {
     return Column(
       children: [
         Text(
-          '${weatherData.location}',
+          '${weatherData.name}',
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
@@ -85,13 +85,13 @@ class _WeatherPageState extends State<WeatherPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.network(
-              'https://openweathermap.org/img/w/${weatherData.iconCode}.png',
+              'https://openweathermap.org/img/w/${weatherData.weather![0].icon}.png',
               width: 50,
               height: 50,
             ),
             SizedBox(width: 16),
             Text(
-              '${weatherData.temperature.round()}°C',
+              '${weatherData.main?.temp?.round()}°C',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -101,7 +101,7 @@ class _WeatherPageState extends State<WeatherPage> {
         ),
         SizedBox(height: 16),
         Text(
-          '${weatherData.description}',
+          '${weatherData.weather![0].main}',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
