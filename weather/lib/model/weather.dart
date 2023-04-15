@@ -6,9 +6,9 @@ class WeatherData {
 
   WeatherData(
       {required this.location,
-      required this.temperature,
-      required this.description,
-      required this.iconCode});
+      this.temperature = 0,
+      this.description = '',
+      this.iconCode = ''});
 
   factory WeatherData.fromJson(Map<String, dynamic> json) {
     return WeatherData(
