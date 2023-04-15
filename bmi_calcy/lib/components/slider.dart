@@ -1,57 +1,44 @@
 import 'package:flutter/material.dart';
 
-class SliderComponent extends StatefulWidget {
-  SliderComponent(
-      {Key? key, required this.sliderval, required this.title})
-      : super(key: key);
-  double sliderval = 0;
+class SliderComponent extends StatelessWidget {
+  SliderComponent({
+    Key? key,
+    required this.sliderval,
+    required this.max,
+    required this.title,
+    required this.unit,
+    required this.onChange,
+  }) : super(key: key);
+  double sliderval;
+  double max;
   final String title;
+  final String unit;
+  void Function(double) onChange;
 
-  @override
-  _SliderComponentState createState() => _SliderComponentState();
-}
-
-class _SliderComponentState extends State<SliderComponent> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 200,
-      width: 300,
-      decoration: BoxDecoration(
-          color: Colors.white70,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey[400]!,
-              blurRadius: 10.0,
-              offset: Offset(0, 10),
-            ),
-          ]),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              widget.title,
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            Text(
-              '${widget.sliderval}',
-              style: Theme.of(context).textTheme.headline3,
-            ),
-            Slider(
-              value: widget.sliderval,
-              max: 250,
-              divisions: 250,
-              label: widget.sliderval.round().toString(),
-              onChanged: (double value) {
-                setState(() {
-                  widget.sliderval = value;
-                });
-              },
-            ),
-          ],
-        ),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            title,
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          Text(
+            '${sliderval.round()} ${unit}',
+            style: Theme.of(context).textTheme.headline3,
+          ),
+          Slider(
+            value: sliderval,
+            max: max,
+            divisions: max.toInt(),
+            label: sliderval.round().toString(),
+            onChanged: (double value) {
+              onChange(value);
+            },
+          ),
+        ],
       ),
     );
   }

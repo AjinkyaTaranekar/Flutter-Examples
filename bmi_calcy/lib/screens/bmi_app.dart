@@ -1,5 +1,7 @@
-import 'package:bmi_calcy/components/counter.dart';
+import 'package:bmi_calcy/components/button.dart';
 import 'package:bmi_calcy/components/slider.dart';
+import 'package:bmi_calcy/screens/results.dart';
+import 'package:bmi_calcy/utility/bmi_calculator.dart';
 import 'package:flutter/material.dart';
 
 class BmiApp extends StatefulWidget {
@@ -10,8 +12,7 @@ class BmiApp extends StatefulWidget {
 }
 
 class _BmiAppState extends State<BmiApp> {
-  int _age = 0;
-  int _weight = 0;
+  double _weight = 0;
   double _height = 0;
 
   @override
@@ -30,23 +31,65 @@ class _BmiAppState extends State<BmiApp> {
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Counter(counter: _age, title: 'Age (in years)'),
-              Counter(counter: _weight, title: 'Weight (in kgs)'),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Select your weight and height',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                )),
           ),
-          SliderComponent(
-            sliderval: _height,
-            title: 'Height (in cms)',
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text('Calculate BMI'),
-          ),
+          Expanded(
+              flex: 5,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SliderComponent(
+                      sliderval: _weight,
+                      title: 'Weight (in kgs)',
+                      max: 150,
+                      unit: 'kgs',
+                      onChange: (double value) {
+                        setState(() {
+                          _weight = value;
+                        });
+                      },
+                    ),
+                    SliderComponent(
+                      sliderval: _height,
+                      title: 'Height (in cms)',
+                      max: 200,
+                      unit: 'cms',
+                      onChange: (double value) {
+                        setState(() {
+                          _height = value;
+                        });
+                      },
+                    )
+                  ],
+                ),
+              )),
+          BottomButton(
+            buttonTitle: 'Calculate BMI',
+            onTap: () {
+              BmiCalculator bmiCalculator =
+                  BmiCalculator(height: _height, weight: _weight);
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ResultsPage(
+                    bmiResult: bmiCalculator.calculateBMI(),
+                    resultText: bmiCalculator.getResult(),
+                    resultColour: bmiCalculator.getResultColour(),
+                    interpretation: bmiCalculator.getInterpretation(),
+                  ),
+                ),
+              );
+            },
+          )
         ],
       )),
     );
